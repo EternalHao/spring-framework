@@ -183,6 +183,10 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 		else {
 			// It's an interceptor, so we just invoke it: The pointcut will have
 			// been evaluated statically before this object was constructed.
+			// org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke
+			// org.springframework.aop.aspectj.AspectJAfterAdvice.invoke
+			// org.springframework.aop.aspectj.AspectJAroundAdvice.invoke
+			// org.springframework.aop.aspectj.AspectJAfterThrowingAdvice.invoke
 			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
 		}
 	}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+	<aop:aspectj-autoproxy/>
+<!--	<bean id="studentServiceAspect" class="com.debug.aop.StudentServiceAspect"/>-->
+<!--	<aop:config>-->
+<!--		<aop:aspect id="studentAcpect" ref="studentServiceAspect">-->
+<!--			&lt;!&ndash;定义一个切点&ndash;&gt;-->
+<!--			<aop:pointcut id="b" expression="execution(* com.debug.aop.*.*(..))"></aop:pointcut>-->
+<!--			&lt;!&ndash;定义前置通知&ndash;&gt;-->
+<!--			<aop:before method="before" pointcut-ref="b"></aop:before>-->
+<!--			&lt;!&ndash;后置通知&ndash;&gt;-->
+<!--			<aop:after method="doAfter" pointcut-ref="b"></aop:after>-->
+<!--			&lt;!&ndash;环绕通知&ndash;&gt;-->
+<!--			<aop:around method="doAround" pointcut-ref="b"/>-->
+<!--			&lt;!&ndash;返回通知&ndash;&gt;-->
+<!--			<aop:after-returning method="doAfterReturning" pointcut-ref="b"/>-->
+<!--			&lt;!&ndash;异常通知&ndash;&gt;-->
+<!--			<aop:after-throwing method="doAfterThrowing" pointcut-ref="b" throwing="ex"/>-->
+<!--		</aop:aspect>-->
+<!--	</aop:config>-->
+
+	<context:component-scan base-package="com.debug.aop" annotation-config="true" />
+</beans>

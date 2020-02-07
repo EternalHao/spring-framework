@@ -99,21 +99,25 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 	@Override
 	@Nullable
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
+		// 解析 aop:config
 		CompositeComponentDefinition compositeDef =
 				new CompositeComponentDefinition(element.getTagName(), parserContext.extractSource(element));
 		parserContext.pushContainingComponent(compositeDef);
 
+		// 创建代理
 		configureAutoProxyCreator(parserContext, element);
 
 		List<Element> childElts = DomUtils.getChildElements(element);
 		for (Element elt: childElts) {
 			String localName = parserContext.getDelegate().getLocalName(elt);
+			// <aop:pointcut id="b" expression="execution(* com.debug.aop.*.*(..))"></aop:pointcut>
 			if (POINTCUT.equals(localName)) {
 				parsePointcut(elt, parserContext);
 			}
 			else if (ADVISOR.equals(localName)) {
 				parseAdvisor(elt, parserContext);
 			}
+			// <aop:aspect id="studentAcpect" ref="studentServiceAspect">
 			else if (ASPECT.equals(localName)) {
 				parseAspect(elt, parserContext);
 			}
@@ -201,6 +205,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 
 		try {
 			this.parseState.push(new AspectEntry(aspectId, aspectName));
+
 			List<BeanDefinition> beanDefinitions = new ArrayList<>();
 			List<BeanReference> beanReferences = new ArrayList<>();
 
@@ -213,10 +218,13 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 			// We have to parse "advice" and all the advice kinds in one loop, to get the
 			// ordering semantics right.
 			NodeList nodeList = aspectElement.getChildNodes();
+			// 是否已经发现了通知标志位 没有发现是false  发现是true
+			// 解析 切面 和 通知,封装为BeanDefination
 			boolean adviceFoundAlready = false;
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
 				if (isAdviceNode(node, parserContext)) {
+					// 判断切面下是否含有通知
 					if (!adviceFoundAlready) {
 						adviceFoundAlready = true;
 						if (!StringUtils.hasText(aspectName)) {
@@ -227,12 +235,13 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 						}
 						beanReferences.add(new RuntimeBeanReference(aspectName));
 					}
+					// 将通知转化为 BeanDefination
 					AbstractBeanDefinition advisorDefinition = parseAdvice(
 							aspectName, i, aspectElement, (Element) node, parserContext, beanDefinitions, beanReferences);
 					beanDefinitions.add(advisorDefinition);
 				}
 			}
-
+			// 组合成为Aspect类型的bean定义
 			AspectComponentDefinition aspectComponentDefinition = createAspectComponentDefinition(
 					aspectElement, aspectId, beanDefinitions, beanReferences, parserContext);
 			parserContext.pushContainingComponent(aspectComponentDefinition);
@@ -270,6 +279,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 		}
 		else {
 			String name = parserContext.getDelegate().getLocalName(aNode);
+			// 五种通知
 			return (BEFORE.equals(name) || AFTER.equals(name) || AFTER_RETURNING_ELEMENT.equals(name) ||
 					AFTER_THROWING_ELEMENT.equals(name) || AROUND.equals(name));
 		}
@@ -331,12 +341,12 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 			aspectFactoryDef.getPropertyValues().add("aspectBeanName", aspectName);
 			aspectFactoryDef.setSynthetic(true);
 
-			// register the pointcut
+			//
 			AbstractBeanDefinition adviceDef = createAdviceDefinition(
 					adviceElement, parserContext, aspectName, order, methodDefinition, aspectFactoryDef,
 					beanDefinitions, beanReferences);
 
-			// configure the advisor
+			// 配置通知
 			RootBeanDefinition advisorDefinition = new RootBeanDefinition(AspectJPointcutAdvisor.class);
 			advisorDefinition.setSource(parserContext.extractSource(adviceElement));
 			advisorDefinition.getConstructorArgumentValues().addGenericArgumentValue(adviceDef);
@@ -365,7 +375,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 			Element adviceElement, ParserContext parserContext, String aspectName, int order,
 			RootBeanDefinition methodDef, RootBeanDefinition aspectFactoryDef,
 			List<BeanDefinition> beanDefinitions, List<BeanReference> beanReferences) {
-
+		// 根据标签获取不同的通知
 		RootBeanDefinition adviceDefinition = new RootBeanDefinition(getAdviceClass(adviceElement, parserContext));
 		adviceDefinition.setSource(parserContext.extractSource(adviceElement));
 
@@ -408,13 +418,17 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 	 * Gets the advice implementation class corresponding to the supplied {@link Element}.
 	 */
 	private Class<?> getAdviceClass(Element adviceElement, ParserContext parserContext) {
+		// aop 源码解析 标签
 		String elementName = parserContext.getDelegate().getLocalName(adviceElement);
+		// [aop:before: null]
 		if (BEFORE.equals(elementName)) {
 			return AspectJMethodBeforeAdvice.class;
 		}
+		// [aop:after: null]
 		else if (AFTER.equals(elementName)) {
 			return AspectJAfterAdvice.class;
 		}
+		// [aop:after-returning: null]
 		else if (AFTER_RETURNING_ELEMENT.equals(elementName)) {
 			return AspectJAfterReturningAdvice.class;
 		}
@@ -441,6 +455,7 @@ class ConfigBeanDefinitionParser implements BeanDefinitionParser {
 
 		try {
 			this.parseState.push(new PointcutEntry(id));
+			// org.springframework.aop.aspectj.AspectJExpressionPointcut
 			pointcutDefinition = createPointcutDefinition(expression);
 			pointcutDefinition.setSource(parserContext.extractSource(pointcutElement));
 

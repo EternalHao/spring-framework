@@ -136,6 +136,7 @@ final class SimpleAnnotationMetadataReadingVisitor extends ClassVisitor {
 				access, name, descriptor, this.annotatedMethods::add);
 	}
 
+	// 解析类结束
 	@Override
 	public void visitEnd() {
 		String[] memberClassNames = StringUtils.toStringArray(this.memberClassNames);

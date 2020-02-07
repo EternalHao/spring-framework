@@ -275,6 +275,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			processKeyedProperty(tokens, pv);
 		}
 		else {
+			// org.springframework.beans.AbstractNestablePropertyAccessor.processLocalProperty
 			processLocalProperty(tokens, pv);
 		}
 	}
@@ -455,6 +456,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 				}
 				pv.getOriginalPropertyValue().conversionNecessary = (valueToApply != originalValue);
 			}
+			// org.springframework.beans.BeanWrapperImpl.BeanPropertyHandler.setValue
 			ph.setValue(valueToApply);
 		}
 		catch (TypeMismatchException ex) {

@@ -36,8 +36,10 @@ import org.springframework.lang.Nullable;
  */
 public abstract class AbstractPropertyAccessor extends TypeConverterSupport implements ConfigurablePropertyAccessor {
 
+	// 提取旧值编辑器
 	private boolean extractOldValueForEditor = false;
 
+	//
 	private boolean autoGrowNestedPaths = false;
 
 
@@ -94,6 +96,8 @@ public abstract class AbstractPropertyAccessor extends TypeConverterSupport impl
 				// This method may throw any BeansException, which won't be caught
 				// here, if there is a critical failure such as no matching field.
 				// We can attempt to deal only with less serious exceptions.
+
+				// org.springframework.beans.AbstractNestablePropertyAccessor.setPropertyValue(org.springframework.beans.PropertyValue)
 				setPropertyValue(pv);
 			}
 			catch (NotWritablePropertyException ex) {

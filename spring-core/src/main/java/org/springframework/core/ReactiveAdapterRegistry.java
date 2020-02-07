@@ -336,7 +336,6 @@ public class ReactiveAdapterRegistry {
 		}
 	}
 
-
 	private static class CoroutinesRegistrar {
 
 		@SuppressWarnings("KotlinInternalInJava")

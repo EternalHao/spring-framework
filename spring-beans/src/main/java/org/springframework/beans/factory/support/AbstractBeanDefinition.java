@@ -365,6 +365,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @since 2.5
 	 */
 	public void applyDefaults(BeanDefinitionDefaults defaults) {
+		// 设置默认的beanDefinition 属性
 		Boolean lazyInit = defaults.getLazyInit();
 		if (lazyInit != null) {
 			setLazyInit(lazyInit);
@@ -771,9 +772,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 		this.nonPublicAccessAllowed = nonPublicAccessAllowed;
 	}
 
-	/**
-	 * Return whether to allow access to non-public constructors and methods.
-	 */
+
 	public boolean isNonPublicAccessAllowed() {
 		return this.nonPublicAccessAllowed;
 	}

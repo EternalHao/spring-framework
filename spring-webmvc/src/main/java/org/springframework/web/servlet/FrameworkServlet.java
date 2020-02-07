@@ -871,11 +871,13 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	/**
 	 * Override the parent class implementation in order to intercept PATCH requests.
 	 */
+
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		HttpMethod httpMethod = HttpMethod.resolve(request.getMethod());
+
 		if (httpMethod == HttpMethod.PATCH || httpMethod == null) {
 			processRequest(request, response);
 		}
@@ -894,7 +896,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	@Override
 	protected final void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		// get请求从这里开始
 		processRequest(request, response);
 	}
 

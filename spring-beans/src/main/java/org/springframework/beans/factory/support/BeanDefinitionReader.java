@@ -113,7 +113,7 @@ public interface BeanDefinitionReader {
 	int loadBeanDefinitions(String location) throws BeanDefinitionStoreException;
 
 	/**
-	 * Load bean definitions from the specified resource locations.
+	 * 从指定的资源加载bean定义的位置。
 	 * @param locations the resource locations, to be loaded with the ResourceLoader
 	 * (or ResourcePatternResolver) of this bean definition reader
 	 * @return the number of bean definitions found

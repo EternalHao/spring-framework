@@ -45,7 +45,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * Parser for the {@code <context:component-scan/>} element.
+ * 解析{@code <context:component-scan/>} 标签.
  *
  * @author Mark Fisher
  * @author Ramnivas Laddad
@@ -82,12 +82,16 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 	public BeanDefinition parse(Element element, ParserContext parserContext) {
 		String basePackage = element.getAttribute(BASE_PACKAGE_ATTRIBUTE);
 		basePackage = parserContext.getReaderContext().getEnvironment().resolvePlaceholders(basePackage);
+		// 如果多个路径，开始用 " ,: " 隔开
 		String[] basePackages = StringUtils.tokenizeToStringArray(basePackage,
 				ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
 
-		// Actually scan for bean definitions and register them.
+		//
 		ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
+		// 扫描 @Component源码
+		// 解析注解 返回BeanDefinition
 		Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
+		// 注册BeanDefinition
 		registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
 
 		return null;
@@ -99,7 +103,7 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 			useDefaultFilters = Boolean.parseBoolean(element.getAttribute(USE_DEFAULT_FILTERS_ATTRIBUTE));
 		}
 
-		// Delegate bean definition registration to scanner class.
+		// 委托bean定义注册扫描仪类
 		ClassPathBeanDefinitionScanner scanner = createScanner(parserContext.getReaderContext(), useDefaultFilters);
 		scanner.setBeanDefinitionDefaults(parserContext.getDelegate().getBeanDefinitionDefaults());
 		scanner.setAutowireCandidatePatterns(parserContext.getDelegate().getAutowireCandidatePatterns());
@@ -109,6 +113,7 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 		}
 
 		try {
+			// 解析name-generator
 			parseBeanNameGenerator(element, scanner);
 		}
 		catch (Exception ex) {
@@ -116,6 +121,7 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 		}
 
 		try {
+			// 解析scope-resolver
 			parseScope(element, scanner);
 		}
 		catch (Exception ex) {

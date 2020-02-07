@@ -66,9 +66,9 @@ public class InjectionMetadata {
 
 
 	private static final Log logger = LogFactory.getLog(InjectionMetadata.class);
-
+	// 被注入的目标类
 	private final Class<?> targetClass;
-
+	// 注入的元素
 	private final Collection<InjectedElement> injectedElements;
 
 	@Nullable
@@ -113,6 +113,7 @@ public class InjectionMetadata {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Processing injected element of bean '" + beanName + "': " + element);
 				}
+				// @Resource InjectionMetadata
 				element.inject(target, beanName, pvs);
 			}
 		}
@@ -214,6 +215,7 @@ public class InjectionMetadata {
 
 		/**
 		 * Either this or {@link #getResourceToInject} needs to be overridden.
+		 * @Resource
 		 */
 		protected void inject(Object target, @Nullable String requestingBeanName, @Nullable PropertyValues pvs)
 				throws Throwable {
@@ -221,6 +223,7 @@ public class InjectionMetadata {
 			if (this.isField) {
 				Field field = (Field) this.member;
 				ReflectionUtils.makeAccessible(field);
+				// 属性注入
 				field.set(target, getResourceToInject(target, requestingBeanName));
 			}
 			else {

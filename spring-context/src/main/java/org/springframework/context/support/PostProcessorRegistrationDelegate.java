@@ -41,7 +41,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.lang.Nullable;
 
 /**
- * Delegate for AbstractApplicationContext's post-processor handling.
+ * 后置处理器 委派模式.
  *
  * @author Juergen Hoeller
  * @since 4.0
@@ -92,6 +92,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
+			// 执行所有的 BeanDefinitionRegistryPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -126,7 +127,7 @@ final class PostProcessorRegistrationDelegate {
 				currentRegistryProcessors.clear();
 			}
 
-			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+			// 执行所有的 BeanFactoryPostProcessors
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
@@ -282,6 +283,7 @@ final class PostProcessorRegistrationDelegate {
 	private static void invokeBeanFactoryPostProcessors(
 			Collection<? extends BeanFactoryPostProcessor> postProcessors, ConfigurableListableBeanFactory beanFactory) {
 
+		// org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanFactory
 		for (BeanFactoryPostProcessor postProcessor : postProcessors) {
 			postProcessor.postProcessBeanFactory(beanFactory);
 		}

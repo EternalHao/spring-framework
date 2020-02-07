@@ -6,13 +6,14 @@ dependencies {
 	compile(project(":spring-beans"))
 	compile(project(":spring-core"))
 	optional(project(":spring-aop"))
-	optional(project(":spring-context"))  // for JCA, @EnableTransactionManagement
+	compile(project(":spring-context"))  // for JCA, @EnableTransactionManagement
+//	compile(project(":spring-context:testFixtures"))
 	optional(project(":kotlin-coroutines"))
 	optional("javax.ejb:javax.ejb-api")
 	optional("javax.interceptor:javax.interceptor-api")
 	optional("javax.resource:javax.resource-api")
-	optional("javax.transaction:javax.transaction-api")
-	optional("com.ibm.websphere:uow")
+	compile("javax.transaction:javax.transaction-api:1.3")
+	compile("com.ibm.websphere:uow")
 	optional("io.projectreactor:reactor-core")
 	optional("io.vavr:vavr")
 	optional("org.jetbrains.kotlin:kotlin-reflect")

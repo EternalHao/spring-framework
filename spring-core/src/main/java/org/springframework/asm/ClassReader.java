@@ -688,7 +688,8 @@ public class ClassReader {
       currentOffset = readMethod(classVisitor, context, currentOffset);
     }
 
-    // Visit the end of the class.
+    // 解析类结束
+	  // SimpleAnnotationMetadataReadingVisitor.visitEnd
     classVisitor.visitEnd();
   }
 

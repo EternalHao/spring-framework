@@ -66,6 +66,8 @@ public class BeanFactoryAdvisorRetrievalHelper {
 	 */
 	public List<Advisor> findAdvisorBeans() {
 		// Determine list of advisor bean names, if not cached already.
+		// org.springframework.aop.aspectj.AspectJPointcutAdvisor#0
+		// ....
 		String[] advisorNames = this.cachedAdvisorBeanNames;
 		if (advisorNames == null) {
 			// Do not initialize FactoryBeans here: We need to leave all regular beans
@@ -80,6 +82,7 @@ public class BeanFactoryAdvisorRetrievalHelper {
 
 		List<Advisor> advisors = new ArrayList<>();
 		for (String name : advisorNames) {
+			// 是否是合格bean
 			if (isEligibleBean(name)) {
 				if (this.beanFactory.isCurrentlyInCreation(name)) {
 					if (logger.isTraceEnabled()) {

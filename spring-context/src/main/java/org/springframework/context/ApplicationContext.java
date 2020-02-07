@@ -59,7 +59,7 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
 
 	/**
-	 * Return the unique id of this application context.
+	 * 返回这个应用程序上下文的惟一id.
 	 * @return the unique id of the context, or {@code null} if none
 	 */
 	@Nullable

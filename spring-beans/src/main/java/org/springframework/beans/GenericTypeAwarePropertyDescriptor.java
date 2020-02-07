@@ -45,9 +45,11 @@ final class GenericTypeAwarePropertyDescriptor extends PropertyDescriptor {
 
 	private final Class<?> beanClass;
 
+	// get方法
 	@Nullable
 	private final Method readMethod;
 
+	// set方法
 	@Nullable
 	private final Method writeMethod;
 

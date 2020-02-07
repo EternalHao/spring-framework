@@ -40,6 +40,7 @@ import org.springframework.aop.TargetSource;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.cglib.core.ClassLoaderAwareGeneratorStrategy;
 import org.springframework.cglib.core.CodeGenerationException;
+import org.springframework.cglib.core.DebuggingClassWriter;
 import org.springframework.cglib.core.SpringNamingPolicy;
 import org.springframework.cglib.proxy.Callback;
 import org.springframework.cglib.proxy.CallbackFilter;
@@ -160,6 +161,8 @@ class CglibAopProxy implements AopProxy, Serializable {
 		if (logger.isTraceEnabled()) {
 			logger.trace("Creating CGLIB proxy: " + this.advised.getTargetSource());
 		}
+		// cglib生成的类会保存在该路径下
+		System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY,"/Users/sky/hyh/source/spring-framework/spring-debug/cglib");
 
 		try {
 			Class<?> rootClass = this.advised.getTargetClass();
@@ -177,7 +180,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			// Validate the class, writing log messages as necessary.
 			validateClassIfNecessary(proxySuperClass, classLoader);
 
-			// Configure CGLIB Enhancer...
+			// 开始设置cglib的配置
 			Enhancer enhancer = createEnhancer();
 			if (classLoader != null) {
 				enhancer.setClassLoader(classLoader);
@@ -656,6 +659,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			this.advised = advised;
 		}
 
+		// cglib 执行拦截 这个方法是cglib自动生成类后，在调用目标方法会先调用这个方法
 		@Override
 		@Nullable
 		public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
@@ -664,6 +668,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			Object target = null;
 			TargetSource targetSource = this.advised.getTargetSource();
 			try {
+				// xml参数exposend的作用，具体是做什么，还不清楚
 				if (this.advised.exposeProxy) {
 					// Make invocation available if necessary.
 					oldProxy = AopContext.setCurrentProxy(proxy);
@@ -685,7 +690,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 					retVal = methodProxy.invoke(target, argsToUse);
 				}
 				else {
-					// We need to create a method invocation...
+					// 我们需要创建一个方法调用……
 					retVal = new CglibMethodInvocation(proxy, target, method, args, targetClass, chain, methodProxy).proceed();
 				}
 				retVal = processReturnType(proxy, target, method, retVal);
@@ -744,6 +749,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 		@Nullable
 		public Object proceed() throws Throwable {
 			try {
+				// org.springframework.aop.framework.ReflectiveMethodInvocation.proceed
 				return super.proceed();
 			}
 			catch (RuntimeException ex) {

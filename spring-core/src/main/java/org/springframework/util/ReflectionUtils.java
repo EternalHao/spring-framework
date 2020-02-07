@@ -30,8 +30,7 @@ import java.util.Map;
 import org.springframework.lang.Nullable;
 
 /**
- * Simple utility class for working with the reflection API and handling
- * reflection exceptions.
+ * 使用反射API的简单实用程序类和处理异常反映。;
  *
  * <p>Only intended for internal use.
  *
@@ -565,6 +564,7 @@ public abstract class ReflectionUtils {
 	 */
 	@SuppressWarnings("deprecation")  // on JDK 9
 	public static void makeAccessible(Method method) {
+		// 设置反射可行性
 		if ((!Modifier.isPublic(method.getModifiers()) ||
 				!Modifier.isPublic(method.getDeclaringClass().getModifiers())) && !method.isAccessible()) {
 			method.setAccessible(true);

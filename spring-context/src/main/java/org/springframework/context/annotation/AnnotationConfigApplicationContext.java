@@ -85,6 +85,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
 		this();
+		// 注册组件
 		register(componentClasses);
 		refresh();
 	}
