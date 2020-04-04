@@ -1,30 +1,33 @@
-# <img src="src/docs/asciidoc/images/spring-framework.png" width="80" height="80"> Spring Framework [![Build Status](https://build.spring.io/plugins/servlet/wittified/build-status/SPR-PUBM)](https://build.spring.io/browse/SPR)
+> v1.0 待补充
+# 1.源码搭建环境
 
-This is the home of the Spring Framework: the foundation for all [Spring projects](https://spring.io/projects). Collectively the Spring Framework and the family of Spring projects are often referred to simply as "Spring". 
+>首先搭建源码，你需要了解的前置知识
 
-Spring provides everything required beyond the Java programming language for creating enterprise applications for a wide range of scenarios and architectures. Please read the [Overview](https://docs.spring.io/spring/docs/current/spring-framework-reference/overview.html#spring-introduction) section as reference for a more complete introduction.
+## 1.1 Gradle
+Spring官方的代码是利用Gradle这个构建工具构建的，如果不了解可以移步
+1. 【视频】 https://www.bilibili.com/video/BV1iW411C7CV?from=search&seid=14415940432123256686
+2. 【官网】https://gradle.org/
 
-## Code of Conduct
+## 1.1 官方文档
+spring的官方文档这个是一定要看的，至少要看3-5编，首先你要会用，
+然后才能理解源码
+，地址奉上
+1. https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html
 
-This project is governed by the [Spring Code of Conduct](CODE_OF_CONDUCT.adoc). By participating, you are expected to uphold this code of conduct. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
+---
 
-## Access to Binaries
+我们以往的看源码的方式，都是在没有源码的环境中看源码，这个有很多问题
 
-For access to artifacts or a distribution zip, see the [Spring Framework Artifacts](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Artifacts) wiki page.
+1. 不能添加注释
+我以前的操作一般是摘出来，然后自己添加，注释总结文档，但是老感觉不全面
 
-## Documentation
+2. 不能修改源码
+这个在没有源码的环境的中，肯定是行不通的
 
-The Spring Framework maintains reference documentation ([published](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/) and [source](src/docs/asciidoc)), Github [wiki pages](https://github.com/spring-projects/spring-framework/wiki), and an
-[API reference](https://docs.spring.io/spring-framework/docs/current/javadoc-api/). There are also [guides and tutorials](https://spring.io/guides) across Spring projects.
+综合上面的考虑，我决定搭建源码调试环境
 
-## Build from Source
+我当前的实现方式一般是在源码目录下新建一个模块，例如debug，然后把我测试的代码，写在下面，然后开始debug。
 
-See the [Build from Source](https://github.com/spring-projects/spring-framework/wiki/Build-from-Source) Wiki page and the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+当然我还会把有关于解析源码的详细资料也放在我的目录下
 
-## Stay in Touch
-
-Follow [@SpringCentral](https://twitter.com/springcentral), [@SpringFramework](https://twitter.com/springframework), and its [team members](https://twitter.com/springframework/lists/team/members) on Twitter. In-depth articles can be found at [The Spring Blog](https://spring.io/blog/), and releases are announced via our [news feed](https://spring.io/blog/category/news).
-
-## License
-
-The Spring Framework is released under version 2.0 of the [Apache License](https://www.apache.org/licenses/LICENSE-2.0).
+**写这个的目的就是帮助大家减少 搭建源码 已经找寻相关的资料的时间，可以把更多的时间投入到源码的阅读中来，不断的提升自己**
