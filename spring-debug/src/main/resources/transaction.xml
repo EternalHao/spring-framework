@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+<!--	<bean id="helloService" name="myName" class="com.debug.ioc.instance.HelloServiceImpl" lazy-init="true" />-->
+
+<!--	<alias name="helloService" alias="myAlias"/>-->
+
+<!--	<bean id="staticFactoryService" class="com.debug.ioc.instance.StaticFactoryService" factory-method="createInstance"/>-->
+
+
+	<!--实例工厂 bean-->
+<!--	<bean id="instanceFactoryService" class="com.debug.ioc.instance.InstanceFactoryService">-->
+		<!-- inject any dependencies required by this locator bean -->
+<!--	</bean>-->
+
+<!--	<bean id="clientService"-->
+<!--		  factory-bean="instanceFactoryService"-->
+<!--		  factory-method="createClientServiceInstance"/>-->
+
+<!--	<bean id="accountService"-->
+<!--		  factory-bean="instanceFactoryService"-->
+<!--		  factory-method="createAccountServiceInstance"/>-->
+
+	<!-- 依赖注入 -->
+	<!-- 构造器注入 -->
+	<!--<bean id="constructorDI" class="com.debug.ioc.di.construct.ConstructorDI">
+		<constructor-arg ref="beanA"/>
+	</bean>-->
+
+	<!--构造器循环引用-->
+	<!--<bean id="beanA" class="com.debug.ioc.di.construct.BeanA">
+		<constructor-arg ref="beanB"/>
+	</bean>
+
+	<bean id="beanB" class="com.debug.ioc.di.construct.BeanB">
+		<constructor-arg ref="beanA"/>
+	</bean>-->
+
+<!--	setter注入-->
+<!--	<bean id="setterDI" class="com.debug.ioc.di.setter.SetterDI">-->
+<!--		<property name="exampleBean" ref="exampleBean"/>-->
+<!--	</bean>-->
+<!--	<bean id="exampleBean" class="com.debug.ioc.di.setter.ExampleBean"/>-->
+
+
+
+	<!-- bean 生命周期 -->
+	<context:component-scan base-package="com.debug.ioc"/>
+
+	<bean id="beanLife" class="com.debug.ioc.beanlife.BeanLife" init-method="init"
+		  destroy-method="des" scope="singleton">
+		<property name="name" value="张三"/>
+	</bean>
+</beans>
