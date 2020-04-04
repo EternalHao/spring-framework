@@ -66,6 +66,8 @@ import org.springframework.util.StringUtils;
  * @author Rob Harrop
  * @author Sam Brannen
  * @author Sebastien Deleuze
+ *
+ * Bean反射工具类
  */
 public abstract class BeanUtils {
 
