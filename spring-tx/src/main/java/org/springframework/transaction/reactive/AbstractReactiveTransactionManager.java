@@ -189,6 +189,7 @@ public abstract class AbstractReactiveTransactionManager implements ReactiveTran
 				logger.debug("Suspending current transaction, creating new transaction with name [" +
 						definition.getName() + "]");
 			}
+			// 新事务的建立
 			Mono<SuspendedResourcesHolder> suspendedResources = suspend(synchronizationManager, transaction);
 			return suspendedResources.flatMap(suspendedResourcesHolder -> {
 				GenericReactiveTransaction status = newReactiveTransaction(synchronizationManager,
@@ -199,7 +200,7 @@ public abstract class AbstractReactiveTransactionManager implements ReactiveTran
 								resumeAfterBeginException(synchronizationManager, transaction, suspendedResourcesHolder, beginEx).then(Mono.error(beginEx)));
 			});
 		}
-
+		// 嵌入式事务的处理
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
 			if (debugEnabled) {
 				logger.debug("Creating nested transaction with name [" + definition.getName() + "]");
@@ -248,6 +249,7 @@ public abstract class AbstractReactiveTransactionManager implements ReactiveTran
 
 	/**
 	 * Initialize transaction synchronization as appropriate.
+	 * 将事务信息记录在当前线程中
 	 */
 	private void prepareSynchronization(TransactionSynchronizationManager synchronizationManager,
 			GenericReactiveTransaction status, TransactionDefinition definition) {
@@ -405,12 +407,14 @@ public abstract class AbstractReactiveTransactionManager implements ReactiveTran
 
 		return TransactionSynchronizationManager.forCurrentTransaction().flatMap(synchronizationManager -> {
 			GenericReactiveTransaction reactiveTx = (GenericReactiveTransaction) transaction;
+			// 如果在事务链中已经被标记回滚，那么不会尝试提交事务，直接回滚
 			if (reactiveTx.isRollbackOnly()) {
 				if (reactiveTx.isDebug()) {
 					logger.debug("Transactional code has requested rollback");
 				}
 				return processRollback(synchronizationManager, reactiveTx);
 			}
+			// 处理事务提交
 			return processCommit(synchronizationManager, reactiveTx);
 		});
 	}
@@ -436,6 +440,7 @@ public abstract class AbstractReactiveTransactionManager implements ReactiveTran
 						if (status.isDebug()) {
 							logger.debug("Initiating transaction commit");
 						}
+						// 如果是独立的事务则直接提交
 						return doCommit(synchronizationManager, status);
 					}
 					return Mono.empty();
@@ -444,6 +449,7 @@ public abstract class AbstractReactiveTransactionManager implements ReactiveTran
 					// Store result in a local variable in order to appease the
 					// Eclipse compiler with regard to inferred generics.
 					Mono<Object> result = propagateException;
+					// 添加的TransactionSynchronization中的对应方法的调用
 					if (ErrorPredicates.UNEXPECTED_ROLLBACK.test(ex)) {
 						result = triggerAfterCompletion(synchronizationManager, status, TransactionSynchronization.STATUS_ROLLED_BACK).then(propagateException);
 					}
@@ -458,6 +464,7 @@ public abstract class AbstractReactiveTransactionManager implements ReactiveTran
 						else {
 							mono = Mono.empty();
 						}
+						// 提交过程中出现异常则回滚
 						result = mono.then(doRollbackOnCommitException(synchronizationManager, status, ex)).then(propagateException);
 					}
 

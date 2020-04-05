@@ -500,10 +500,15 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
 	protected void initStrategies(ApplicationContext context) {
+		//初始化组件策略
 		initMultipartResolver(context);
 		initLocaleResolver(context);
 		initThemeResolver(context);
 		initHandlerMappings(context);
+		/**
+		 * @see org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter
+		 * @see org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter
+		 */
 		initHandlerAdapters(context);
 		initHandlerExceptionResolvers(context);
 		initRequestToViewNameTranslator(context);
@@ -515,6 +520,11 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * Initialize the MultipartResolver used by this class.
 	 * <p>If no bean is defined with the given name in the BeanFactory for this namespace,
 	 * no multipart handling is provided.
+	 * <bean id="multipartResolver" class="org.Springframework.web.multipart.commons. CommonsMultipartResolver">
+	 *  <property name="maximumFileSize">
+	 *      <value>100000</value>
+	 *  </property>
+	 * </bean>
 	 */
 	private void initMultipartResolver(ApplicationContext context) {
 		try {
@@ -539,6 +549,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * Initialize the LocaleResolver used by this class.
 	 * <p>If no bean is defined with the given name in the BeanFactory for this namespace,
 	 * we default to AcceptHeaderLocaleResolver.
+	 *
+	 * <bean id="localeResolver" class="org.Springframework.web.servlet.i18n. AcceptHeaderLocaleResolver"/>
 	 */
 	private void initLocaleResolver(ApplicationContext context) {
 		try {
@@ -564,6 +576,9 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * Initialize the ThemeResolver used by this class.
 	 * <p>If no bean is defined with the given name in the BeanFactory for this namespace,
 	 * we default to a FixedThemeResolver.
+	 * <bean id="themeSource" class="org.Springframework.ui.context.support.ResourceBundleThemeSource">
+	 *     <property name="basenamePrefix" value="com.test. "></property>
+	 * </bean>
 	 */
 	private void initThemeResolver(ApplicationContext context) {
 		try {
@@ -610,6 +625,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 			catch (NoSuchBeanDefinitionException ex) {
 				// Ignore, we'll add a default HandlerMapping later.
+				// 必须要配
 			}
 		}
 
@@ -771,6 +787,9 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * Initialize the {@link FlashMapManager} used by this servlet instance.
 	 * <p>If no implementation is configured then we default to
 	 * {@code org.springframework.web.servlet.support.DefaultFlashMapManager}.
+	 *
+	 * SpringMVC Flash attributes提供了一个请求存储属性，可供其他请求使用。在使用重定向时候非常必要，
+	 * 例如Post/Redirect/Get模式。Flash attributes在重定向之前暂存（就像存在 session中）以便重定向之后还能使用，并立即删除
 	 */
 	private void initFlashMapManager(ApplicationContext context) {
 		try {
@@ -939,6 +958,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		try {
+			// 核心分发处理
 			doDispatch(request, response);
 		}
 		finally {
@@ -1008,22 +1028,26 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
+				// 如果是MultipartContent类型的request则转换request为MultipartHttpServletRequest 类型的
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
-				// Determine handler for the current request.
+				// 根据request信息寻找对应的Handler.
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
+					// 如果没有找到对应的handler则通过response反馈错误信息
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
 				// Determine handler adapter for the current request.
+				// 根据当前的handler寻找对应的HandlerAdapter
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
+				// 如果当前handler支持last-modified头处理
 				if (isGet || "HEAD".equals(method)) {
 					long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
 					if (new ServletWebRequest(request, response).checkNotModified(lastModified) && isGet) {
@@ -1053,6 +1077,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
+			// 渲染页面
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
@@ -1095,25 +1120,26 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * either a ModelAndView or an Exception to be resolved to a ModelAndView.
 	 */
 	private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,
-			@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,
-			@Nullable Exception exception) throws Exception {
+				@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,
+				@Nullable Exception exception) throws Exception {
 
-		boolean errorView = false;
+			boolean errorView = false;
 
-		if (exception != null) {
-			if (exception instanceof ModelAndViewDefiningException) {
-				logger.debug("ModelAndViewDefiningException encountered", exception);
-				mv = ((ModelAndViewDefiningException) exception).getModelAndView();
+			if (exception != null) {
+				if (exception instanceof ModelAndViewDefiningException) {
+					logger.debug("ModelAndViewDefiningException encountered", exception);
+					mv = ((ModelAndViewDefiningException) exception).getModelAndView();
+				}
+				else {
+					Object handler = (mappedHandler != null ? mappedHandler.getHandler() : null);
+					mv = processHandlerException(request, response, handler, exception);
+					errorView = (mv != null);
+				}
 			}
-			else {
-				Object handler = (mappedHandler != null ? mappedHandler.getHandler() : null);
-				mv = processHandlerException(request, response, handler, exception);
-				errorView = (mv != null);
-			}
-		}
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
+			// 处理页面跳转
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
@@ -1132,6 +1158,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		if (mappedHandler != null) {
 			// Exception (if any) is already handled..
+			// 完成处理激活触发器
 			mappedHandler.triggerAfterCompletion(request, response, null);
 		}
 	}
@@ -1346,7 +1373,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		View view;
 		String viewName = mv.getViewName();
 		if (viewName != null) {
-			// We need to resolve the view name.
+			// We need to resolve the view nams
+			// 解析视图名称
 			view = resolveViewName(viewName, mv.getModelInternal(), locale, request);
 			if (view == null) {
 				throw new ServletException("Could not resolve view with name '" + mv.getViewName() +

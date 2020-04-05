@@ -29,11 +29,11 @@ public class BookServiceImpl implements BookService{
 	 */
 	@Override
 	public void updateStock(String bid) {
-		Integer st = jdbcTemplate.queryForObject("select "count" from stock where sid = ?", new Object[]{bid}, Integer.class);
+		Integer st = jdbcTemplate.queryForObject("select count from stock where sid = ?", new Object[]{bid}, Integer.class);
 		if(st <= 0){
 			throw new RuntimeException("库存不足");
 		}else{
-			jdbcTemplate.update("update stock set  "count" = "count" - 1 where sid = ?",bid);
+			jdbcTemplate.update("update stock set  count = count - 1 where sid = ?",bid);
 		}
 
 	}
